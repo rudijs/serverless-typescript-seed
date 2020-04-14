@@ -56,12 +56,12 @@ functions:
           method: get
           path: user/{userName} # single user
           cors: true
-          # authorizer: aws_iam
+          authorizer: aws_iam
       - http:
           method: get
           path: user # all users
           cors: true
-          # authorizer: aws_iam
+          authorizer: aws_iam
     iamRoleStatements:
       - Effect: Allow
         Action:
