@@ -5,7 +5,7 @@ export const main: APIGatewayProxyHandler = async (_event, _context) => {
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: `Pong - ${new Date(Date.now())}`,
+      message: `pong - ${new Date(Date.now())}`,
     }),
   }
 }
