@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from "aws-lambda"
 import "source-map-support/register"
 import * as AWS from "aws-sdk"
 import { success, failure } from "../lib/response"
+import { unescape } from "querystring"
 
 export const main: APIGatewayProxyHandler = async (event, _context) => {
   AWS.config.region = process.env.REGION
@@ -15,7 +16,7 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
 
       const params = {
         UserPoolId: process.env.USER_POOL_ID,
-        Username: userName,
+        Username: unescape(userName),
       }
 
       const res = await cognitoidentityserviceprovider.adminGetUser(params).promise()
@@ -37,6 +38,6 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log("err", e)
-    return failure({ message: e.message })
+    return failure([{ status: 500, title: e.message, description: "Did not work" }])
   }
 }

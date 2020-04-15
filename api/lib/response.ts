@@ -1,18 +1,30 @@
-export function success(body: any) {
-  return buildResponse(200, body)
+type jsonApiErrorItem = {
+  status: number
+  source?: string
+  title: string
+  description: string
 }
 
-export function failure(body: any) {
-  return buildResponse(500, body)
+export function success(data: any) {
+  return {
+    ...buildResponse(200),
+    ...{ body: JSON.stringify({ data }) },
+  }
 }
 
-function buildResponse(statusCode: number, body: any) {
+export function failure(errors: jsonApiErrorItem[]) {
+  return {
+    ...buildResponse(500),
+    ...{ body: JSON.stringify({ errors }) },
+  }
+}
+
+function buildResponse(statusCode: number) {
   return {
     statusCode: statusCode,
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Credentials": true,
     },
-    body: JSON.stringify(body),
   }
 }
