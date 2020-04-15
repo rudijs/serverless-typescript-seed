@@ -2,10 +2,11 @@
   "name": "serverless-typescript-seed-api",
   "version": "1.0.0",
   "description": "Serverless webpack example using Typescript",
-  "main": "handler.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "e2e": "jest -c e2e/jest.config.js --runInBand e2e"
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watchAll",
+    "view:coverage": "brave-browser coverage/lcov-report/index.html",
+    "e2e": "jest -c e2e/jest.config.js --runInBand --bail e2e"
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
@@ -28,6 +29,6 @@
     "webpack": "^4.29.0",
     "webpack-node-externals": "^1.7.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "Rudi Starcevic",
   "license": "MIT"
 }

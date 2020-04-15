@@ -6,6 +6,6 @@ export const pingTest = () => {
   test("should reply pong", async () => {
     const res = await axios.get(`${url}/ping`)
     expect(res.status).toEqual(200)
-    expect(res.data.message).toMatch(/^pong/)
+    expect(res.data.message).toMatch(/^ppong/)
   })
 }
