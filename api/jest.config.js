@@ -4,7 +4,7 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest",
   },
   collectCoverage: true,
-  collectCoverageFrom: ["lib/**/*.{ts,tsx}"],
+  collectCoverageFrom: ["lib/**/*.{ts,tsx}", "!lib/fixtures/**/*"],
   coverageThreshold: {
     global: {
       branches: 80,

@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "crypto-js": "^4.0.0",
+    "easy-rbac": "^3.1.1",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/aws-sdk": "^2.7.0",
+    "@types/easy-rbac": "^3.1.0",
     "@types/jest": "^25.2.1",
     "@types/node": "^10.12.18",
     "axios": "^0.19.2",
