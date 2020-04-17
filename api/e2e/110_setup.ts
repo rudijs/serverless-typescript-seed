@@ -1,42 +1,42 @@
-import * as AWS from "aws-sdk"
+import Amplify, { Auth } from "aws-amplify"
+import fetch from "node-fetch"
 
-AWS.config.region = process.env.AWS_APP_COGNITO_REGION
+// aws-amplify uses fetch in the browser, to make it work in node polyfill the global fetch using node-fetch
+global["fetch"] = fetch
+
+if (
+  !process.env.AWS_APP_COGNITO_REGION ||
+  !process.env.AWS_APP_COGNITO_USER_POOL_ID ||
+  !process.env.AWS_APP_COGNITO_IDENTITY_POOL_ID ||
+  !process.env.AWS_APP_COGNITO_APP_CLIENT_ID ||
+  !process.env.AWS_APP_SERVICE_ENDPOINT ||
+  !process.env.AWS_APP_ADMIN_PASSWORD
+)
+  throw "Missing one or more required Env vars"
 
 export const setupCredentials = () => {
   test("should sign in to AWS and configure credentials for subsequent tests to use", async () => {
-    const cognito = new AWS.CognitoIdentityServiceProvider()
-
-    // todo: check for reqired env vars
-
-    let params = {
-      AuthFlow: "ADMIN_NO_SRP_AUTH",
-      ClientId: process.env.AWS_APP_COGNITO_APP_CLIENT_ID,
-      UserPoolId: process.env.AWS_APP_COGNITO_USER_POOL_ID,
-      AuthParameters: {
-        USERNAME: "user@example.com",
-        PASSWORD: process.env.AWS_APP_ADMIN_PASSWORD,
+    const config = {
+      Auth: {
+        mandatorySignIn: true,
+        region: process.env.AWS_APP_COGNITO_REGION,
+        userPoolId: process.env.AWS_APP_COGNITO_USER_POOL_ID,
+        identityPoolId: process.env.AWS_APP_COGNITO_IDENTITY_POOL_ID,
+        userPoolWebClientId: process.env.AWS_APP_COGNITO_APP_CLIENT_ID,
+      },
+      API: {
+        endpoints: [
+          {
+            name: "notes",
+            region: process.env.AWS_APP_COGNITO_REGION,
+            endpoint: process.env.AWS_APP_SERVICE_ENDPOINT,
+          },
+        ],
       },
     }
-    // console.log(params)
 
-    try {
-      const res = await cognito.adminInitiateAuth(params).promise()
+    Amplify.configure(config)
 
-      process.env.ACCESS_TOKEN = res.AuthenticationResult.AccessToken
-      process.env.ID_TOKEN = res.AuthenticationResult.IdToken
-
-      const authenticator = `cognito-idp.${process.env.AWS_APP_COGNITO_REGION}.amazonaws.com/${process.env.AWS_APP_COGNITO_USER_POOL_ID}`
-
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: process.env.AWS_APP_COGNITO_IDENTITY_POOL_ID,
-        Logins: {
-          [authenticator]: res.AuthenticationResult.IdToken,
-        },
-      })
-
-      await (AWS.config.credentials as AWS.Credentials).getPromise()
-    } catch (e) {
-      console.log("Set up global test variables error", e)
-    }
+    await Auth.signIn("admin@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
   })
 }
