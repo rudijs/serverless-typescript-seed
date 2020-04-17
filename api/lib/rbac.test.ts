@@ -17,13 +17,13 @@ describe("#rbac", () => {
     expect(res).toBeTruthy()
   })
 
-  test("should allow a admin cognito:adminListGroupsForUser", async () => {
-    const res = await rbac.can("admin", "cognito:adminListGroupsForUser")
+  test("should allow a admin cognito-idp:ListUsers", async () => {
+    const res = await rbac.can("admin", "cognito-idp:ListUsers")
     expect(res).toBeTruthy()
   })
 
-  test("should deny a user cognito:adminListGroupsForUser", async () => {
-    const res = await rbac.can(["user"], "cognito:adminListGroupsForUser")
+  test("should deny a user cognito-idp:ListUsers", async () => {
+    const res = await rbac.can(["user"], "cognito-idp:ListUsers")
     expect(res).toBeFalsy()
   })
 })

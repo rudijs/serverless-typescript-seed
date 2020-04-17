@@ -19,12 +19,12 @@ const opts = {
     ],
   },
   manager: {
-    can: ["post:save", "post:delete", "account:*"],
     inherits: ["user"],
+    can: ["post:save", "post:delete", "account:*"],
   },
   admin: {
-    can: ["cognito:adminListGroupsForUser"],
     inherits: ["manager"],
+    can: ["cognito-idp:ListUsers"],
   },
 }
 
