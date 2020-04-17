@@ -26,4 +26,19 @@ describe("#rbac", () => {
     const res = await rbac.can(["user"], "cognito-idp:ListUsers")
     expect(res).toBeFalsy()
   })
+
+  test("should allow a user to cognito-idp:AdminGetUser their own user profile", async () => {
+    const res = await rbac.can(["user"], "cognito-idp:AdminGetUser", { userName: "user@example.com", ownerUserName: "user@example.com" })
+    expect(res).toBeTruthy()
+  })
+
+  test("should deny a user to cognito-idp:AdminGetUser get not their own user profile", async () => {
+    const res = await rbac.can(["user"], "cognito-idp:AdminGetUser", { userName: "user@example.com", ownerUserName: "admin@example.com" })
+    expect(res).toBeFalsy()
+  })
+
+  test("should allow admin group to cognito-idp:AdminGetUser get any user profile", async () => {
+    const res = await rbac.can(["admin"], "cognito-idp:AdminGetUser", { userName: "admin@example.com", ownerUserName: "user@example.com" })
+    expect(res).toBeTruthy()
+  })
 })

@@ -1,7 +1,7 @@
 import { API, Auth } from "aws-amplify"
 
 export const userTests = () => {
-  test("should fetch all users", async () => {
+  test.skip("should fetch all users", async () => {
     const res = await API.get("notes", "/user", {})
     // console.log(res)
     expect(res.data.length).toEqual(2)
@@ -15,7 +15,7 @@ export const userTests = () => {
     expect(res.data).toHaveProperty("Username")
   })
 
-  test("should not fetch all users when using a role without permission", async () => {
+  test.skip("should not fetch all users when using a role without permission", async () => {
     await Auth.signIn("user@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
     try {
       await API.get("notes", "/user", {})

@@ -9,7 +9,7 @@ interface ICognitoIdentityServiceProvider {
   }
 }
 
-export const cognitoGroups = async (cognitoAuthenticationProvider: string, cognitoIdentityServiceProvider: ICognitoIdentityServiceProvider): Promise<any> => {
+export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cognitoIdentityServiceProvider: ICognitoIdentityServiceProvider): Promise<any> => {
   // Cognito authentication provider looks like:
   // cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
   // Where us-east-1_aaaaaaaaa is the User Pool id
@@ -24,9 +24,9 @@ export const cognitoGroups = async (cognitoAuthenticationProvider: string, cogni
 
   const userPoolUserId = parts[parts.length - 1]
 
-  console.log("userPoolId", userPoolId)
+  // console.log("userPoolId", userPoolId)
   // Ex: userPoolId ap-southeast-1_bBEEUWPbr
-  console.log("userPoolUserId", userPoolUserId)
+  // console.log("userPoolUserId", userPoolUserId)
   // Ex: userPoolUserId da9e8459-7ed3-42f2-9646-57b373cdd192
 
   const data = await cognitoIdentityServiceProvider
@@ -36,7 +36,7 @@ export const cognitoGroups = async (cognitoAuthenticationProvider: string, cogni
     })
     .promise()
 
-  console.log("adminListGroupsForUser", data)
+  // console.log("adminListGroupsForUser", data)
 
-  return groupFilter(data)
+  return { userPoolUserId, cognitoGroups: groupFilter(data) }
 }

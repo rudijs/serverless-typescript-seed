@@ -16,6 +16,10 @@ const opts = {
         name: "user:*",
         when: async (params) => params.id === params.userId,
       },
+      {
+        name: "cognito-idp:AdminGetUser",
+        when: async (params) => params.userName === params.ownerUserName,
+      },
     ],
   },
   manager: {
@@ -24,7 +28,7 @@ const opts = {
   },
   admin: {
     inherits: ["manager"],
-    can: ["cognito-idp:ListUsers"],
+    can: ["cognito-idp:*"],
   },
 }
 
