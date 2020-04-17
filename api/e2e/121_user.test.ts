@@ -1,5 +1,7 @@
 import Amplify, { Auth, API } from "aws-amplify"
 import fetch from "node-fetch"
+
+// aws-amplify uses fetch in the browser, to make it work in node polyfill the global fetch using node-fetch
 global["fetch"] = fetch
 
 describe("amplify", () => {
@@ -25,7 +27,7 @@ describe("amplify", () => {
       },
     })
     try {
-      await Auth.signIn("admin@example.com", "Passw0rd!")
+      await Auth.signIn("admin@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
 
       // const currentUserInfo = await Auth.currentUserInfo();
       // console.log(101, currentUserInfo);
@@ -36,7 +38,11 @@ describe("amplify", () => {
       console.log(users)
       expect(true).toBeTruthy()
     } catch (e) {
-      console.log("e", e)
+      if (e.response.data) {
+        console.log("e.response.data", e.response.data)
+      } else {
+        console.log("e", e)
+      }
     }
   })
 })
