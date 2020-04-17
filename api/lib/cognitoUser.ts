@@ -1,6 +1,13 @@
 import { groupFilter } from "./groupFilter"
 
 interface ICognitoIdentityServiceProvider {
+  adminGetUser({}: {
+    UserPoolId: string
+    Username: string
+  }): {
+    promise(): Promise<any>
+  }
+
   adminListGroupsForUser({}: {
     UserPoolId: string
     Username: string
@@ -29,14 +36,23 @@ export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cog
   // console.log("userPoolUserId", userPoolUserId)
   // Ex: userPoolUserId da9e8459-7ed3-42f2-9646-57b373cdd192
 
-  const data = await cognitoIdentityServiceProvider
+  // user details
+  const params = {
+    UserPoolId: process.env.USER_POOL_ID,
+    Username: userPoolUserId,
+  }
+
+  const userData = await cognitoIdentityServiceProvider.adminGetUser(params).promise()
+  console.log(userData)
+
+  const groupData = await cognitoIdentityServiceProvider
     .adminListGroupsForUser({
       UserPoolId: userPoolId,
       Username: userPoolUserId,
     })
     .promise()
 
-  // console.log("adminListGroupsForUser", data)
+  // console.log("adminListGroupsForUser", groupData)
 
-  return { userPoolUserId, cognitoGroups: groupFilter(data) }
+  return { userPoolUserId, cognitoGroups: groupFilter(groupData) }
 }

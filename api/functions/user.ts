@@ -12,11 +12,32 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
 
   try {
     // 1st get the cognito groups for the requesting user
-    const authProvider = event.requestContext.identity.cognitoAuthenticationProvider
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider()
+    const authProvider = event.requestContext.identity.cognitoAuthenticationProvider
     const { userPoolUserId, cognitoGroups } = await cognitoUserInfo(authProvider, cognitoIdentityServiceProvider)
     console.log("userPoolUserId", userPoolUserId)
     console.log("requestUserGroups", cognitoGroups)
+    const params1 = {
+      UserPoolId: process.env.USER_POOL_ID,
+      Username: userPoolUserId,
+    }
+
+    const res1 = await cognitoIdentityServiceProvider.adminGetUser(params1).promise()
+    console.log("request user", res1)
+    /*
+    request user {
+  Username: 'da9e8459-7ed3-42f2-9646-57b373cdd192',
+  UserAttributes: [
+    { Name: 'sub', Value: 'da9e8459-7ed3-42f2-9646-57b373cdd192' },
+    { Name: 'email_verified', Value: 'false' },
+    { Name: 'email', Value: 'admin@example.com' }
+  ],
+  UserCreateDate: 2020-04-17T05:51:07.329Z,
+  UserLastModifiedDate: 2020-04-17T05:51:08.473Z,
+  Enabled: true,
+  UserStatus: 'CONFIRMED'
+
+  */
 
     // single user
     if (event.pathParameters && event.pathParameters.userName) {
