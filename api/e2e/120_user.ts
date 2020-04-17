@@ -22,9 +22,9 @@ export const userTests = () => {
     } catch (e) {
       // console.log(101, e.response)
       // console.log(101, e.response.data)
-      expect(e.response.status).toEqual(500)
-      expect(e.response.data.errors[0].status).toEqual(500)
-      expect(e.response.data.errors[0].title).toBe("Not allowed bro")
+      expect(e.response.status).toEqual(403)
+      expect(e.response.data.errors[0].status).toEqual(403)
+      expect(e.response.data.errors[0].title).toBe("Permission denied for this action")
     }
   })
 }

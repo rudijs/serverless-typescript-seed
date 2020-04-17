@@ -12,9 +12,13 @@ export function success(data: any) {
   }
 }
 
-export function failure(errors: jsonApiErrorItem[]) {
+export function failure(errors: jsonApiErrorItem[], code?: number) {
+  let statusCode = 500
+  if (code) {
+    statusCode = code
+  }
   return {
-    ...buildResponse(500),
+    ...buildResponse(statusCode),
     ...{ body: JSON.stringify({ errors }) },
   }
 }

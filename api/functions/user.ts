@@ -5,6 +5,7 @@ import { success, failure } from "../lib/response"
 import { unescape } from "querystring"
 import { cognitoGroups } from "../lib/groups"
 import { rbac } from "../lib/rbac"
+import { PermissionError } from "../lib/errors"
 
 export const main: APIGatewayProxyHandler = async (event, _context) => {
   AWS.config.region = process.env.REGION
@@ -33,7 +34,7 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
     }
 
     const allow = await rbac.can(requestUserGroups, "cognito-idp:ListUsers")
-    if (!allow) throw new Error("Not allowed bro")
+    if (!allow) throw new PermissionError("Permission denied for this action")
 
     // list all users
     const params = {
@@ -47,6 +48,11 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log("err", e)
-    return failure([{ status: 500, title: e.message, description: "Did not work" }])
+
+    let status = 500
+    if (e.code) {
+      status = e.code
+    }
+    return failure([{ status, title: e.message, description: "Application error" }], status)
   }
 }
