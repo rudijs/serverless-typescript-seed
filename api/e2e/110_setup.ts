@@ -1,4 +1,4 @@
-import Amplify, { Auth } from "aws-amplify"
+import Amplify from "aws-amplify"
 import fetch from "node-fetch"
 
 // aws-amplify uses fetch in the browser, to make it work in node polyfill the global fetch using node-fetch
@@ -15,7 +15,7 @@ if (
   throw "Missing one or more required Env vars"
 
 export const setupCredentials = () => {
-  test("should sign in to AWS and configure credentials for subsequent tests to use", async () => {
+  test("should configure AWS Amplify credentials for the following tests", async () => {
     const config = {
       Auth: {
         mandatorySignIn: true,
@@ -36,7 +36,5 @@ export const setupCredentials = () => {
     }
 
     Amplify.configure(config)
-
-    await Auth.signIn("admin@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
   })
 }

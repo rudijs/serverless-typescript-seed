@@ -27,6 +27,7 @@ describe("cognitoUser", () => {
     const res = await cognitoUserInfo(cognitoIdentityServiceProvider, cognitoIdentityServiceProviderMock)
     // console.log(res)
     expect(res.userPoolUserId).toBe("qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr")
+    expect(res.userAttributes.email).toBe("admin@example.com")
     expect(res.cognitoGroups.length).toEqual(2)
     expect(res.cognitoGroups).toContain("auditor")
     expect(res.cognitoGroups).toContain("user")

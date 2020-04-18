@@ -16,7 +16,10 @@ interface ICognitoIdentityServiceProvider {
   }
 }
 
-export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cognitoIdentityServiceProvider: ICognitoIdentityServiceProvider): Promise<any> => {
+export const cognitoUserInfo = async (
+  cognitoAuthenticationProvider: string,
+  cognitoIdentityServiceProvider: ICognitoIdentityServiceProvider
+): Promise<{ userPoolUserId: string; userAttributes: any; cognitoGroups: string[] }> => {
   // Cognito authentication provider looks like:
   // cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
   // Where us-east-1_aaaaaaaaa is the User Pool id
@@ -28,12 +31,9 @@ export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cog
   const userPoolIdParts = parts[parts.length - 3].split("/")
 
   const userPoolId = userPoolIdParts[userPoolIdParts.length - 1]
+  // Ex: userPoolId ap-southeast-1_bBEEUWPbr
 
   const userPoolUserId = parts[parts.length - 1]
-
-  // console.log("userPoolId", userPoolId)
-  // Ex: userPoolId ap-southeast-1_bBEEUWPbr
-  // console.log("userPoolUserId", userPoolUserId)
   // Ex: userPoolUserId da9e8459-7ed3-42f2-9646-57b373cdd192
 
   // user details
@@ -43,7 +43,18 @@ export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cog
   }
 
   const userData = await cognitoIdentityServiceProvider.adminGetUser(params).promise()
-  console.log(userData)
+  // console.log("userData", userData)
+
+  // filter out UserAttributes
+  const userAttributes = {}
+  userData.UserAttributes.forEach((item) => {
+    userAttributes[item.Name] = item.Value
+    // convert String "true" or "false" to a Boolean
+    if (item.Name === "email_verified") {
+      userAttributes[item.Name] = item.Value === "true"
+    }
+  })
+  // console.log(userAttributes)
 
   const groupData = await cognitoIdentityServiceProvider
     .adminListGroupsForUser({
@@ -54,5 +65,5 @@ export const cognitoUserInfo = async (cognitoAuthenticationProvider: string, cog
 
   // console.log("adminListGroupsForUser", groupData)
 
-  return { userPoolUserId, cognitoGroups: groupFilter(groupData) }
+  return { userPoolUserId, userAttributes, cognitoGroups: groupFilter(groupData) }
 }
