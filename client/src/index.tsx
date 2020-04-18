@@ -4,6 +4,9 @@ import "./index.css"
 import App from "./App"
 import * as serviceWorker from "./serviceWorker"
 
+import "mobx-react-lite/batchingForReactDom"
+// import { state } from "./models/state"
+
 import { createMuiTheme } from "@material-ui/core/styles"
 import { blueGrey } from "@material-ui/core/colors"
 import { ThemeProvider } from "@material-ui/styles"
