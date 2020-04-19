@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React from "react"
 import { Link } from "react-router-dom"
 
 import { makeStyles } from "@material-ui/core/styles"
@@ -6,7 +6,7 @@ import Paper from "@material-ui/core/Paper"
 import { Typography } from "@material-ui/core"
 
 import { observer } from "mobx-react-lite"
-import { MyContext } from "../context"
+import { useAppState } from "../context"
 import { Counter } from "./Counter"
 
 const useStyles = makeStyles((theme) => ({
@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme) => ({
 
 export const HomePage: React.FC = observer(() => {
   const classes = useStyles()
-  const appState = useContext(MyContext)
+  const appState = useAppState()
+
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Home Page</Typography>
@@ -32,9 +33,6 @@ export const HomePage: React.FC = observer(() => {
         <Link to="/profile">Profile</Link>
         <br />
         <Link to="/signin">Sign In</Link>
-        {/* <br />
-            <button onClick={() => context.setCount(context.count + 1)}>Inc</button>
-            {context.count} */}
         <br />
         <button onClick={() => appState.setGroup("admin")}>Sign In</button>
         <br />
