@@ -1,8 +1,14 @@
 import React from "react"
+
+import { observer } from "mobx-react-lite"
+import { useAppState } from "../../context"
+import { Auth } from "aws-amplify"
+import { Link, useHistory, useLocation } from "react-router-dom"
+
 import { makeStyles } from "@material-ui/core/styles"
-import { AppBar, Toolbar, Typography, Button } from "@material-ui/core"
+import { AppBar, Toolbar, Typography, Button, SwipeableDrawer, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core"
 import IconButton from "@material-ui/core/IconButton"
-import MenuIcon from "@material-ui/icons/Menu"
+import { Home, AccountCircle, Menu, Star } from "@material-ui/icons"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,25 +19,122 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    cursor: "pointer",
+  },
+  list: {
+    width: 250,
   },
 }))
 
-export const Navbar: React.FC = () => {
+export const Navbar: React.FC = observer(() => {
   const classes = useStyles()
+  const appState = useAppState()
+  const history = useHistory()
+  const location = useLocation()
+
+  const signOutHandler = async () => {
+    try {
+      await Auth.signOut()
+    } catch (e) {
+      console.log(e)
+    } finally {
+      appState.signOut()
+      history.push("/")
+    }
+  }
+
+  const [open, setOpen] = React.useState(false)
+
+  // const [subOpen, setSubOpen] = React.useState(true)
+
+  const toggleDrawer = () => {
+    setOpen(!open)
+  }
+
+  const sideList = () => {
+    return (
+      <div className={classes.list} role="presentation">
+        <List component="nav">
+          <ListItem
+            button
+            selected={location.pathname === "/"}
+            onClick={() => {
+              history.push("/")
+              toggleDrawer()
+            }}
+          >
+            <ListItemIcon>
+              <Home />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+
+          {!appState.isAuthenticated && (
+            <ListItem
+              button
+              selected={location.pathname === "/signin"}
+              onClick={() => {
+                history.push("/signin")
+                toggleDrawer()
+              }}
+            >
+              <ListItemIcon>
+                <Star />
+              </ListItemIcon>
+              <ListItemText primary="Sign In" />
+            </ListItem>
+          )}
+
+          {appState.isAuthenticated && (
+            <ListItem
+              button
+              selected={location.pathname === "/profile"}
+              onClick={() => {
+                history.push("/profile")
+                toggleDrawer()
+              }}
+            >
+              <ListItemIcon>
+                <AccountCircle />
+              </ListItemIcon>
+              <ListItemText primary="Profile" />
+            </ListItem>
+          )}
+        </List>
+      </div>
+    )
+  }
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer}>
+            <Menu />
           </IconButton>
-          <Typography variant="h6" className={classes.title}>
+          <Typography
+            variant="h6"
+            className={classes.title}
+            onClick={() => {
+              history.push("/")
+            }}
+          >
             Home
           </Typography>
-          <Button color="inherit">Login</Button>
+          {!appState.isAuthenticated ? (
+            <Button component={Link} to={"/signin"} color="inherit">
+              Sign In
+            </Button>
+          ) : (
+            <Button onClick={signOutHandler} color="inherit">
+              Sign Out
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
+      <SwipeableDrawer open={open} onOpen={toggleDrawer} onClose={toggleDrawer}>
+        {sideList()}
+      </SwipeableDrawer>
     </div>
   )
-}
+})

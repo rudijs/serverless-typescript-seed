@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react"
-import { Link, useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 
 import { observer } from "mobx-react-lite"
 import { useAppState } from "../context"
@@ -169,9 +169,6 @@ export const SignInPage: React.FC = observer(() => {
             )
           }}
         </Formik>
-        <Typography>
-          <Link to="/">Home</Link>
-        </Typography>
       </Paper>
     </Box>
   )

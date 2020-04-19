@@ -7,6 +7,9 @@ const State = types
       self.group = name
       console.log(self.group)
     },
+    signOut() {
+      self.group = "guest"
+    },
   }))
   .views((self) => ({
     get isAuthenticated() {

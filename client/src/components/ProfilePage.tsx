@@ -1,5 +1,4 @@
 import React from "react"
-import { Link } from "react-router-dom"
 
 import { makeStyles } from "@material-ui/core/styles"
 import Paper from "@material-ui/core/Paper"
@@ -21,9 +20,6 @@ export const ProfilePage: React.FC = () => {
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Profile Page</Typography>
-      <Typography>
-        <Link to="/">Home</Link>
-      </Typography>
     </Paper>
   )
 }

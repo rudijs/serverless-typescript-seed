@@ -1,15 +1,11 @@
 import React from "react"
-import { Link } from "react-router-dom"
 
 import { makeStyles } from "@material-ui/core/styles"
 import Paper from "@material-ui/core/Paper"
 import { Typography } from "@material-ui/core"
 
 import { observer } from "mobx-react-lite"
-import { useAppState } from "../context"
 import { Counter } from "./Counter"
-
-import { Auth } from "aws-amplify"
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -24,27 +20,12 @@ const useStyles = makeStyles((theme) => ({
 
 export const HomePage: React.FC = observer(() => {
   const classes = useStyles()
-  const appState = useAppState()
-
-  const signOutHandler = async () => {
-    await Auth.signOut()
-    appState.setGroup("guest")
-  }
 
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Home Page</Typography>
       <Typography paragraph>Serverless App Seed</Typography>
       <Typography paragraph>ReactJS, Serverless Framework, AWS Cognito, S3 and Cloudfront</Typography>
-      <Typography>
-        <Link to="/profile">Profile</Link>
-        <br />
-        <Link to="/signin">Sign In</Link>
-        <br />
-        <button onClick={signOutHandler}>Sign Out</button>
-        <br />
-        {appState.groups}
-      </Typography>
       <Counter />
     </Paper>
   )

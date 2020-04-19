@@ -5,5 +5,5 @@ import { useAppState } from "../context"
 
 export const Counter: React.FC = observer(() => {
   const appState = useAppState()
-  return <Typography>Counter Observer: {appState.groups}</Typography>
+  return <Typography>[Debug] Group: {appState.groups}</Typography>
 })
