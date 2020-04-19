@@ -17,7 +17,10 @@ import Amplify, { Auth } from "aws-amplify"
 import config from "./config"
 import { appState } from "./models/state"
 
-Amplify.Logger.LOG_LEVEL = "DEBUG"
+if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
+  Amplify.Logger.LOG_LEVEL = "DEBUG"
+}
+
 // const logger = new Logger('foo', 'VERBOSE')
 
 // logger.info('info bar')

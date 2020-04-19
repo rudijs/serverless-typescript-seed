@@ -5,7 +5,6 @@ const State = types
   .actions((self) => ({
     setGroup(name: string) {
       self.group = name
-      console.log(self.group)
     },
     signOut() {
       self.group = "guest"
