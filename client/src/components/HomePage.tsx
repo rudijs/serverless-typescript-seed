@@ -9,6 +9,8 @@ import { observer } from "mobx-react-lite"
 import { useAppState } from "../context"
 import { Counter } from "./Counter"
 
+import { Auth } from "aws-amplify"
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(2),
@@ -24,6 +26,11 @@ export const HomePage: React.FC = observer(() => {
   const classes = useStyles()
   const appState = useAppState()
 
+  const signOutHandler = async () => {
+    await Auth.signOut()
+    appState.setGroup("guest")
+  }
+
   return (
     <Paper className={classes.paper}>
       <Typography variant="h3">Home Page</Typography>
@@ -34,9 +41,7 @@ export const HomePage: React.FC = observer(() => {
         <br />
         <Link to="/signin">Sign In</Link>
         <br />
-        <button onClick={() => appState.setGroup("admin")}>Sign In</button>
-        <br />
-        <button onClick={() => appState.setGroup("guest")}>Sign Out</button>
+        <button onClick={signOutHandler}>Sign Out</button>
         <br />
         {appState.groups}
       </Typography>

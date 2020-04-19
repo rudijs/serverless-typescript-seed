@@ -1,11 +1,23 @@
-import React from "react"
-import { Link } from "react-router-dom"
+import React, { useState, useRef } from "react"
+import { Link, useHistory } from "react-router-dom"
+
+import { observer } from "mobx-react-lite"
+import { useAppState } from "../context"
+
+import { Formik, Field, Form } from "formik"
+import * as Yup from "yup"
+import { Auth } from "aws-amplify"
+import "./SignInPage.css"
 
 import { makeStyles } from "@material-ui/core/styles"
-import Paper from "@material-ui/core/Paper"
-import { Typography } from "@material-ui/core"
+import { Box, Paper, Typography, TextField, Button, Chip, CircularProgress } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
+  container: {
+    [theme.breakpoints.up("md")]: {
+      width: "50%",
+    },
+  },
   paper: {
     marginTop: theme.spacing(2),
     padding: theme.spacing(3, 2),
@@ -14,16 +26,153 @@ const useStyles = makeStyles((theme) => ({
     "-webkit-animation": "fadein 1s" /* Safari and Chrome */,
     "-o-animation": "fadein 1s" /* Opera */,
   },
+  progresStyle: {
+    marginLeft: "1rem",
+    color: "blue",
+  },
+  formInput: {
+    width: "100%",
+    marginTop: theme.spacing(4),
+  },
+  authError: {
+    display: "flex",
+    justifyContent: "center",
+    marginTop: "1rem",
+  },
 }))
 
-export const SignInPage: React.FC = () => {
+export const SignInPage: React.FC = observer(() => {
   const classes = useStyles()
+
+  const appState = useAppState()
+
+  let history = useHistory()
+
+  const [authError, setAuthError] = useState(null)
+
+  const loadingEl = useRef<HTMLElement>(null)
+
+  const authErrorDelete = () => {
+    setAuthError(null)
+  }
+
   return (
-    <Paper className={classes.paper}>
-      <Typography variant="h3">Sign In</Typography>
-      <Typography>
-        <Link to="/">Home</Link>
-      </Typography>
-    </Paper>
+    <Box className={classes.container} mx="auto">
+      <Paper className={classes.paper}>
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validationSchema={Yup.object({
+            password: Yup.string().min(6, "Must be 6 to 12 characters in length").max(12, "Must be 6 to 12 characters in length").required("Required"),
+            email: Yup.string().email("Invalid email address").required("Required"),
+          })}
+          onSubmit={async (values, { setSubmitting, resetForm }) => {
+            // alert(JSON.stringify(values, null, 2));
+            setAuthError(null)
+
+            const { email, password } = values
+
+            try {
+              await Auth.signIn(email, password)
+
+              // const currentUserInfo = await Auth.currentUserInfo();
+              // console.log(101, currentUserInfo);
+
+              const currentSession = await Auth.currentSession()
+              // console.log(201, currentSession.isValid());
+              // console.log(301, currentSession.getIdToken());
+              // console.log(301, currentSession.getIdToken().getJwtToken());
+              // console.log(401, currentSession.getIdToken().payload.email);
+              // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
+
+              // state.setGroup("admin");
+              const groups = currentSession.getIdToken().payload["cognito:groups"]
+              if (groups) {
+                appState.setGroup(groups[0])
+              }
+
+              history.push("/profile")
+            } catch (e) {
+              // console.log(e)
+              // alert(e.message)
+              setAuthError(e.message)
+              // simple current.focus() did not work, had to querySelect the input elemet (material-ui specific I think)
+              // inputEl.current.querySelector('input').focus()
+              resetForm()
+              setSubmitting(false)
+            }
+          }}
+        >
+          {({ isSubmitting, errors, touched }) => {
+            // animation cicular spinner
+            if (loadingEl.current) {
+              isSubmitting ? (loadingEl.current.dataset.state = "loading") : (loadingEl.current.dataset.state = "idle")
+            }
+
+            return (
+              <Form>
+                <Typography variant="h3">Sign In</Typography>
+
+                {authError ? (
+                  <Box className={classes.authError}>
+                    <Chip label={authError} color="secondary" onDelete={authErrorDelete} />
+                  </Box>
+                ) : (
+                  ""
+                )}
+
+                <Field
+                  type="email"
+                  className={classes.formInput}
+                  name="email"
+                  // autoFocus
+                  // innerRef={inputEl}
+                  as={TextField}
+                  label="Email Address"
+                  helperText={touched.email ? errors.email : ""}
+                  error={touched.email && Boolean(errors.email)}
+                />
+
+                <br />
+
+                <Field
+                  type="password"
+                  className={classes.formInput}
+                  name="password"
+                  as={TextField}
+                  label="Password"
+                  helperText={touched.password ? errors.password : ""}
+                  error={touched.password && Boolean(errors.password)}
+                />
+
+                <div>
+                  <Button variant="contained" className={classes.formInput} color="primary" disabled={isSubmitting} type="submit">
+                    {isSubmitting ? (
+                      <>
+                        Submitting...
+                        {/* <CircularProgress size="1rem" className={classes.progresStyle} /> */}
+                      </>
+                    ) : (
+                      "Sign In"
+                    )}
+                  </Button>
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "Center",
+                      marginTop: "2rem",
+                    }}
+                  >
+                    <CircularProgress data-state="idle" size="3rem" innerRef={loadingEl} color="primary" />
+                  </Box>
+                </div>
+              </Form>
+            )
+          }}
+        </Formik>
+        <Typography>
+          <Link to="/">Home</Link>
+        </Typography>
+      </Paper>
+    </Box>
   )
-}
+})
