@@ -72,6 +72,7 @@ export const Navbar: React.FC = observer(() => {
           {!appState.isAuthenticated && (
             <ListItem
               button
+              id="leftDrawerSignIn"
               selected={location.pathname === "/signin"}
               onClick={() => {
                 history.push("/signin")
@@ -109,7 +110,7 @@ export const Navbar: React.FC = observer(() => {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer}>
+          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer} id="appBarMenuIcon">
             <Menu />
           </IconButton>
           <Typography
@@ -122,11 +123,11 @@ export const Navbar: React.FC = observer(() => {
             Home
           </Typography>
           {!appState.isAuthenticated ? (
-            <Button component={Link} to={"/signin"} color="inherit">
+            <Button component={Link} to={"/signin"} color="inherit" id="navSignInButton">
               Sign In
             </Button>
           ) : (
-            <Button onClick={signOutHandler} color="inherit">
+            <Button onClick={signOutHandler} color="inherit" id="navSignOutButton">
               Sign Out
             </Button>
           )}
