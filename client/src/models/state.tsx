@@ -17,9 +17,6 @@ const State = types
     get groups() {
       return self.group
     },
-    get demo() {
-      return "Demo!"
-    },
   }))
 
 export const appState = State.create({ group: "guest" })

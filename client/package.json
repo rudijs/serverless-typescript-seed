@@ -29,7 +29,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test:coverage": "npm run test -- --coverage --watchAll=false",
+    "view:coverage": "brave-browser coverage/lcov-report/index.html"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -49,5 +51,27 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.1.4",
     "cypress": "^4.4.0"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/(index.tsx|config.ts|react-app-env.d.ts|serviceWorker.ts)",
+      "!<rootDir>/node_modules/",
+      "!<rootDir>/path/to/dir/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "clover"
+    ]
   }
 }
