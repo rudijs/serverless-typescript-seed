@@ -15,6 +15,7 @@
     "@types/yup": "^0.26.37",
     "aws-amplify": "^3.0.8",
     "formik": "^2.1.4",
+    "logrocket": "^1.0.7",
     "mobx": "^5.15.4",
     "mobx-react-lite": "^2.0.6",
     "mobx-state-tree": "^3.16.0",

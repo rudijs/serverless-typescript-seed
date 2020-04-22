@@ -16,4 +16,7 @@ export default {
   googleAnalytics: {
     trackingId: process.env.REACT_APP_AWS_APP_GOOGLE_TRACKING_ID,
   },
+  logRocket: {
+    appId: process.env.REACT_APP_LOGROCKET_ID,
+  },
 }

@@ -16,6 +16,11 @@ import Amplify, { Auth } from "aws-amplify"
 import config from "./config"
 import { appState } from "./models/state"
 
+import LogRocket from "logrocket"
+if (config.logRocket.appId) {
+  LogRocket.init(config.logRocket.appId)
+}
+
 if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
   Amplify.Logger.LOG_LEVEL = "DEBUG"
 }
