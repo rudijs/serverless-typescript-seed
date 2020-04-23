@@ -1,11 +1,29 @@
 import React from "react"
 import { render, fireEvent, wait } from "@testing-library/react"
+import { Router } from "react-router-dom"
+import { createMemoryHistory } from "history"
 import user from "@testing-library/user-event"
 import { MemoryRouter } from "react-router-dom"
+import { axe } from "jest-axe"
+import "jest-axe/extend-expect"
 
 import { SignInPage } from "../../components/SignInPage"
 
-test("renders the Sign In Page", async () => {
+import { Auth as MockAuth } from "aws-amplify"
+jest.mock("aws-amplify")
+// jest.spyOn(MockAuth, "signIn").mockReturnValue()
+
+test("the sign in form is accessible", async () => {
+  const { container } = render(<SignInPage />, { wrapper: MemoryRouter })
+  // console.log(container.innerHTML)
+  const form = container.querySelector("#signInForm")!
+  // console.log(form)
+  const results = await axe(form)
+  // console.log(results)
+  expect(results).toHaveNoViolations()
+})
+
+test("renders the Sign In Page with form validation", async () => {
   const { container, getAllByText, findByText } = render(<SignInPage />, { wrapper: MemoryRouter })
 
   // test page title
@@ -20,7 +38,7 @@ test("renders the Sign In Page", async () => {
   let errorMsg = await findByText(/invalid email address/i)
   expect(errorMsg.innerHTML).toMatch(/invalid email address/i)
 
-  // test passwordl validation
+  // test password validation
   await wait(() => {
     const input = container.querySelector("input[name='password']")!
     user.type(input, "123")
@@ -28,4 +46,54 @@ test("renders the Sign In Page", async () => {
   })
   errorMsg = await findByText(/Must be 6 to 12 characters in length/i)
   expect(errorMsg.innerHTML).toMatch(/Must be 6 to 12 characters in length/i)
+})
+
+test("sign in success redirects to /profile", async () => {
+  MockAuth.signIn = jest.fn((email: string, password: string) => {
+    return Promise.resolve("OK")
+  })
+
+  MockAuth.currentSession = jest.fn(() =>
+    Promise.resolve({
+      getIdToken: () => ({
+        payload: { "cognito:groups": ["admin"] },
+        getJwtToken: () => "xxx",
+        getExpiration: () => 42,
+        getIssuedAt: () => 42,
+        decodePayload: () => ({ id: "string" }),
+      }),
+      getRefreshToken: () => ({ getToken: () => "string" }),
+      getAccessToken: () => ({
+        payload: { key: "string" },
+        getJwtToken: () => "string",
+        getExpiration: () => 42,
+        getIssuedAt: () => 42,
+        decodePayload: () => ({ id: "string" }),
+      }),
+      isValid: () => true,
+    })
+  )
+
+  // const { debug, container, getByLabelText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  const history = createMemoryHistory()
+  const { container, getByLabelText } = render(
+    <Router history={history}>
+      <SignInPage />
+    </Router>
+  )
+  const emailInput = getByLabelText(/email/i) as HTMLFormElement
+  const passwordInput = getByLabelText(/password/i) as HTMLFormElement
+
+  // default router location pathname for the initial test setup is '/'
+  expect(history.location.pathname).toBe("/")
+
+  await wait(() => {
+    user.type(emailInput, "user@example.com")
+    user.type(passwordInput, "asdfasdf")
+    const signInButton = container.querySelector("#signInButton")!
+    fireEvent.click(signInButton)
+  })
+
+  // assert login was sucessful with a redirect to the /profile route
+  expect(history.location.pathname).toBe("/profile")
 })

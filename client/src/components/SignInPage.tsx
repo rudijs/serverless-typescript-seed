@@ -109,7 +109,7 @@ export const SignInPage: React.FC = observer(() => {
             }
 
             return (
-              <Form>
+              <Form id="signInForm">
                 <Typography variant="h3">Sign In</Typography>
 
                 {authError ? (
@@ -124,6 +124,7 @@ export const SignInPage: React.FC = observer(() => {
                   type="email"
                   className={classes.formInput}
                   name="email"
+                  id="email"
                   // autoFocus
                   // innerRef={inputEl}
                   as={TextField}
@@ -138,6 +139,7 @@ export const SignInPage: React.FC = observer(() => {
                   type="password"
                   className={classes.formInput}
                   name="password"
+                  id="password"
                   as={TextField}
                   label="Password"
                   helperText={touched.password ? errors.password : ""}
@@ -145,7 +147,7 @@ export const SignInPage: React.FC = observer(() => {
                 />
 
                 <div>
-                  <Button variant="contained" className={classes.formInput} color="primary" disabled={isSubmitting} type="submit">
+                  <Button id="signInButton" variant="contained" className={classes.formInput} color="primary" disabled={isSubmitting} type="submit">
                     {isSubmitting ? (
                       <>
                         Submitting...
