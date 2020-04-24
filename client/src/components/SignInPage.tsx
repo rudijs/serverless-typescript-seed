@@ -74,17 +74,8 @@ export const SignInPage: React.FC = observer(() => {
             try {
               await Auth.signIn(email, password)
 
-              // const currentUserInfo = await Auth.currentUserInfo();
-              // console.log(101, currentUserInfo);
-
               const currentSession = await Auth.currentSession()
-              // console.log(201, currentSession.isValid());
-              // console.log(301, currentSession.getIdToken());
-              // console.log(301, currentSession.getIdToken().getJwtToken());
-              // console.log(401, currentSession.getIdToken().payload.email);
-              // console.log(501, currentSession.getIdToken().payload["cognito:groups"]);
 
-              // state.setGroup("admin");
               const groups = currentSession.getIdToken().payload["cognito:groups"]
               if (groups) {
                 appState.setGroup(groups[0])
@@ -92,8 +83,6 @@ export const SignInPage: React.FC = observer(() => {
 
               history.push("/profile")
             } catch (e) {
-              // console.log(e)
-              // alert(e.message)
               setAuthError(e.message)
               // simple current.focus() did not work, had to querySelect the input elemet (material-ui specific I think)
               // inputEl.current.querySelector('input').focus()

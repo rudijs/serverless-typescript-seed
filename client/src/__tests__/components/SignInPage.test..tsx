@@ -98,25 +98,27 @@ test("sign in success redirects to /profile", async () => {
   expect(history.location.pathname).toBe("/profile")
 })
 
-// statusCode 400
+test("should handle authentication errors", async () => {
+  MockAuth.signIn = jest.fn((email: string, password: string) => {
+    return Promise.reject({ __type: "NotAuthorizedException", message: "Incorrect username or password." })
+    // statusCode 400
+    // {"__type":"UserNotFoundException","message":"User does not exist."}
+    // {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
+  })
 
-// {"__type":"UserNotFoundException","message":"User does not exist."}
+  const { container, getByLabelText, getByText } = render(<SignInPage />, { wrapper: MemoryRouter })
 
-// {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
+  const emailInput = getByLabelText(/email/i) as HTMLFormElement
+  const passwordInput = getByLabelText(/password/i) as HTMLFormElement
 
-/*
-  console.log e2e/120_user.ts:9                                  
-    e {
-      code: 'NotAuthorizedException',
-      name: 'NotAuthorizedException',           
-      message: 'Incorrect username or password.'
-    }         
-                               
-  console.log e2e/120_user.ts:20        
-    e {                                                     
-      code: 'UserNotFoundException',                         
-      name: 'UserNotFoundException',
-      message: 'User does not exist.'                                            
-    }                                                       
-        
-*/
+  await wait(() => {
+    user.type(emailInput, "user@example.com")
+    user.type(passwordInput, "asdfasdf")
+    const signInButton = container.querySelector("#signInButton")!
+    fireEvent.click(signInButton)
+  })
+
+  // const errorMsg = await findByText(/Must be 6 to 12 characters in length/i)
+  const errorMsg = await getByText(/Incorrect username or password/i)
+  expect(errorMsg.innerHTML).toMatch(/Incorrect username or password/i)
+})
