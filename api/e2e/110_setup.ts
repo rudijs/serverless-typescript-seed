@@ -18,8 +18,8 @@ for (let i = 0; i < requiredEnvVars.length; i++) {
   if (!process.env[requiredEnvVars[i]]) throw `Missing required env var: ${requiredEnvVars[i]}`
 }
 
-export const setupCredentials = () => {
-  test("should configure AWS Amplify credentials for the following tests", async () => {
+export const configureAmplify = () => {
+  test("should configure AWS Amplify for the following tests", async () => {
     const config = {
       Auth: {
         mandatorySignIn: true,

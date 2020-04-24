@@ -97,3 +97,26 @@ test("sign in success redirects to /profile", async () => {
   // assert login was sucessful with a redirect to the /profile route
   expect(history.location.pathname).toBe("/profile")
 })
+
+// statusCode 400
+
+// {"__type":"UserNotFoundException","message":"User does not exist."}
+
+// {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
+
+/*
+  console.log e2e/120_user.ts:9                                  
+    e {
+      code: 'NotAuthorizedException',
+      name: 'NotAuthorizedException',           
+      message: 'Incorrect username or password.'
+    }         
+                               
+  console.log e2e/120_user.ts:20        
+    e {                                                     
+      code: 'UserNotFoundException',                         
+      name: 'UserNotFoundException',
+      message: 'User does not exist.'                                            
+    }                                                       
+        
+*/
