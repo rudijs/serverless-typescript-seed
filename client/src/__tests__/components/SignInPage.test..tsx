@@ -42,6 +42,9 @@ test("renders the Sign In Page with form validation", async () => {
     user.type(input, "10")
     fireEvent.blur(input)
   })
+
+  expect(MockAuth.signIn).not.toHaveBeenCalled()
+
   let errorMsg = await findByText(/invalid email address/i)
   expect(errorMsg.innerHTML).toMatch(/invalid email address/i)
 
@@ -51,6 +54,8 @@ test("renders the Sign In Page with form validation", async () => {
     user.type(input, "123")
     fireEvent.blur(input)
   })
+  expect(MockAuth.signIn).not.toHaveBeenCalled()
+
   errorMsg = await findByText(/Must be 6 to 12 characters in length/i)
   expect(errorMsg.innerHTML).toMatch(/Must be 6 to 12 characters in length/i)
 })
@@ -101,6 +106,9 @@ test("sign in success redirects to /profile", async () => {
     fireEvent.click(signInButton)
   })
 
+  expect(MockAuth.signIn).toHaveBeenCalledWith("user@example.com", "asdfasdf")
+  expect(MockAuth.signIn).toHaveBeenCalledTimes(1)
+
   // assert login was sucessful with a redirect to the /profile route
   expect(history.location.pathname).toBe("/profile")
 })
@@ -124,6 +132,9 @@ test("should handle authentication errors", async () => {
     const signInButton = container.querySelector("#signInButton")!
     fireEvent.click(signInButton)
   })
+
+  expect(MockAuth.signIn).toHaveBeenCalledWith("user@example.com", "asdfasdf")
+  expect(MockAuth.signIn).toHaveBeenCalledTimes(1)
 
   // should be an error message
   getByText(/incorrect username or password/i)
