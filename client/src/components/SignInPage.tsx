@@ -91,7 +91,7 @@ export const SignInPage: React.FC = observer(() => {
             }
           }}
         >
-          {({ isSubmitting, errors, touched }) => {
+          {({ isSubmitting, errors, touched, dirty, isValid }) => {
             // animation cicular spinner
             if (loadingEl.current) {
               isSubmitting ? (loadingEl.current.dataset.state = "loading") : (loadingEl.current.dataset.state = "idle")
@@ -103,7 +103,7 @@ export const SignInPage: React.FC = observer(() => {
 
                 {authError ? (
                   <Box className={classes.authError}>
-                    <Chip label={authError} color="secondary" onDelete={authErrorDelete} />
+                    <Chip id="authError" label={authError} color="secondary" onDelete={authErrorDelete} />
                   </Box>
                 ) : (
                   ""
@@ -136,7 +136,14 @@ export const SignInPage: React.FC = observer(() => {
                 />
 
                 <div>
-                  <Button id="signInButton" variant="contained" className={classes.formInput} color="primary" disabled={isSubmitting} type="submit">
+                  <Button
+                    id="signInButton"
+                    variant="contained"
+                    className={classes.formInput}
+                    color="primary"
+                    disabled={isSubmitting || !(isValid && dirty)}
+                    type="submit"
+                  >
                     {isSubmitting ? (
                       <>
                         Submitting...

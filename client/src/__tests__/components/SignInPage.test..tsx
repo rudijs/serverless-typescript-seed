@@ -13,6 +13,10 @@ import { Auth as MockAuth } from "aws-amplify"
 jest.mock("aws-amplify")
 // jest.spyOn(MockAuth, "signIn").mockReturnValue()
 
+afterEach(() => {
+  jest.clearAllMocks()
+})
+
 test("the sign in form is accessible", async () => {
   const { container } = render(<SignInPage />, { wrapper: MemoryRouter })
   // console.log(container.innerHTML)
@@ -28,6 +32,9 @@ test("renders the Sign In Page with form validation", async () => {
 
   // test page title
   expect(getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
+
+  // submit should be disabled by default on page load and empty form fields
+  expect(container.querySelector("#signInButton")).toBeDisabled()
 
   // test email validation
   await wait(() => {
@@ -106,7 +113,7 @@ test("should handle authentication errors", async () => {
     // {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
   })
 
-  const { container, getByLabelText, getByText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  const { container, getByLabelText, getByText, queryByText } = render(<SignInPage />, { wrapper: MemoryRouter })
 
   const emailInput = getByLabelText(/email/i) as HTMLFormElement
   const passwordInput = getByLabelText(/password/i) as HTMLFormElement
@@ -118,7 +125,11 @@ test("should handle authentication errors", async () => {
     fireEvent.click(signInButton)
   })
 
-  // const errorMsg = await findByText(/Must be 6 to 12 characters in length/i)
-  const errorMsg = await getByText(/Incorrect username or password/i)
-  expect(errorMsg.innerHTML).toMatch(/Incorrect username or password/i)
+  // should be an error message
+  getByText(/incorrect username or password/i)
+
+  // click on the error message to make it go away (material-ui Chip element)
+  const authErrorChip = container.querySelector("#authError > svg")!
+  fireEvent.click(authErrorChip)
+  expect(queryByText(/incorrect username or passowrd/i)).not.toBeInTheDocument()
 })
