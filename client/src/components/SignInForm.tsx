@@ -77,6 +77,7 @@ export const SignInForm: React.FC = observer(() => {
           const currentSession = await Auth.currentSession()
 
           const groups = currentSession.getIdToken().payload["cognito:groups"]
+
           if (groups) {
             appState.setGroup(groups[0])
           }
@@ -99,7 +100,9 @@ export const SignInForm: React.FC = observer(() => {
 
         return (
           <Form id="signInForm">
-            <Typography variant="h3">Sign In</Typography>
+            <Typography variant="h3" id="heading">
+              Sign In
+            </Typography>
 
             {authError ? (
               <Box className={classes.authError}>

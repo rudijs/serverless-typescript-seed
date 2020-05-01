@@ -45,6 +45,7 @@ export const SignInPage: React.FC = observer(() => {
 
   const appState = useAppState()
 
+  // if the user is already signed in, redirect to profile page
   if (appState.isAuthenticated) {
     return <Redirect to="/profile" />
   }

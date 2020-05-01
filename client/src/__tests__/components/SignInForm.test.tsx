@@ -28,7 +28,8 @@ test("the sign in form is accessible", async () => {
 })
 
 test("renders the Sign In Page with form validation", async () => {
-  const { container, getAllByText, findByText } = render(<SignInForm />, { wrapper: MemoryRouter })
+  const { container, getAllByText, findByText, getByRole } = render(<SignInForm />, { wrapper: MemoryRouter })
+  // console.log(container.innerHTML)
 
   // test page title
   expect(getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
@@ -45,8 +46,7 @@ test("renders the Sign In Page with form validation", async () => {
 
   expect(MockAuth.signIn).not.toHaveBeenCalled()
 
-  let errorMsg = await findByText(/invalid email address/i)
-  expect(errorMsg.innerHTML).toMatch(/invalid email address/i)
+  await findByText(/invalid email address/i)
 
   // test password validation
   await wait(() => {
@@ -56,8 +56,7 @@ test("renders the Sign In Page with form validation", async () => {
   })
   expect(MockAuth.signIn).not.toHaveBeenCalled()
 
-  errorMsg = await findByText(/Must be 6 to 12 characters in length/i)
-  expect(errorMsg.innerHTML).toMatch(/Must be 6 to 12 characters in length/i)
+  await findByText(/Must be 6 to 12 characters in length/i)
 })
 
 test("sign in success redirects to /profile", async () => {
@@ -88,6 +87,7 @@ test("sign in success redirects to /profile", async () => {
 
   // const { debug, container, getByLabelText } = render(<SignInForm />, { wrapper: MemoryRouter })
   const history = createMemoryHistory()
+
   const { container, getByLabelText } = render(
     <Router history={history}>
       <SignInForm />
