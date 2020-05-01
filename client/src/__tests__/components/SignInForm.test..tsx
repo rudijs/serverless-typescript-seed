@@ -7,7 +7,7 @@ import { MemoryRouter } from "react-router-dom"
 import { axe } from "jest-axe"
 import "jest-axe/extend-expect"
 
-import { SignInPage } from "../../components/SignInPage"
+import { SignInForm } from "../../components/SignInForm"
 
 import { Auth as MockAuth } from "aws-amplify"
 jest.mock("aws-amplify")
@@ -18,7 +18,7 @@ afterEach(() => {
 })
 
 test("the sign in form is accessible", async () => {
-  const { container } = render(<SignInPage />, { wrapper: MemoryRouter })
+  const { container } = render(<SignInForm />, { wrapper: MemoryRouter })
   // console.log(container.innerHTML)
   const form = container.querySelector("#signInForm")!
   // console.log(form)
@@ -28,7 +28,7 @@ test("the sign in form is accessible", async () => {
 })
 
 test("renders the Sign In Page with form validation", async () => {
-  const { container, getAllByText, findByText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  const { container, getAllByText, findByText } = render(<SignInForm />, { wrapper: MemoryRouter })
 
   // test page title
   expect(getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
@@ -86,11 +86,11 @@ test("sign in success redirects to /profile", async () => {
     })
   )
 
-  // const { debug, container, getByLabelText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  // const { debug, container, getByLabelText } = render(<SignInForm />, { wrapper: MemoryRouter })
   const history = createMemoryHistory()
   const { container, getByLabelText } = render(
     <Router history={history}>
-      <SignInPage />
+      <SignInForm />
     </Router>
   )
   const emailInput = getByLabelText(/email/i) as HTMLFormElement
@@ -121,7 +121,7 @@ test("should handle authentication errors", async () => {
     // {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
   })
 
-  const { container, getByLabelText, getByText, queryByText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  const { container, getByLabelText, getByText, queryByText } = render(<SignInForm />, { wrapper: MemoryRouter })
 
   const emailInput = getByLabelText(/email/i) as HTMLFormElement
   const passwordInput = getByLabelText(/password/i) as HTMLFormElement
