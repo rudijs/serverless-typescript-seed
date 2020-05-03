@@ -116,6 +116,7 @@ export const Navbar: React.FC = observer(() => {
             <Menu />
           </IconButton>
           <Typography
+            id="appBarHome"
             variant="h6"
             className={classes.title}
             onClick={() => {
