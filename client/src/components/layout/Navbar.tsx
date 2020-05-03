@@ -57,6 +57,7 @@ export const Navbar: React.FC = observer(() => {
         <List component="nav">
           <ListItem
             button
+            id="leftDrawerHome"
             selected={location.pathname === "/"}
             onClick={() => {
               history.push("/")
@@ -89,6 +90,7 @@ export const Navbar: React.FC = observer(() => {
           {appState.isAuthenticated && (
             <ListItem
               button
+              id="leftDrawerProfile"
               selected={location.pathname === "/profile"}
               onClick={() => {
                 history.push("/profile")
