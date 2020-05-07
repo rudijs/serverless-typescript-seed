@@ -115,16 +115,21 @@ export const Navbar: React.FC = observer(() => {
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={toggleDrawer} id="appBarMenuIcon">
             <Menu />
           </IconButton>
-          <Typography
-            id="appBarHome"
-            variant="h6"
+          <div
+            role="button"
+            tabIndex={0}
             className={classes.title}
             onClick={() => {
               history.push("/")
             }}
+            onKeyDown={() => {
+              history.push("/")
+            }}
           >
-            Home
-          </Typography>
+            <Typography id="appBarHome" variant="h6">
+              Home
+            </Typography>
+          </div>
           {!appState.isAuthenticated ? (
             <Button component={Link} to={"/signin"} color="inherit" id="navSignInButton">
               Sign In
