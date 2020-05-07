@@ -1,5 +1,5 @@
 import React from "react"
-import { render } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 
 import { Redirect as MockRedirect } from "react-router"
@@ -20,9 +20,9 @@ jest.mock("react-router-dom", () => ({
 }))
 
 test("renders Sign In Page", () => {
-  const { getAllByText } = render(<SignInPage />, { wrapper: MemoryRouter })
+  render(<SignInPage />, { wrapper: MemoryRouter })
   // test page title
-  expect(getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
+  expect(screen.getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
 })
 
 test("should redirect if user is already signed in", () => {

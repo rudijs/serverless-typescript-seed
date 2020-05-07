@@ -1,5 +1,5 @@
 import React from "react"
-import { render, fireEvent, wait } from "@testing-library/react"
+import { render, screen, fireEvent, wait } from "@testing-library/react"
 
 import { Router } from "react-router-dom"
 import { createMemoryHistory } from "history"
@@ -18,7 +18,7 @@ afterEach(() => {
 test("toggles Sign In/Out button and Left Side Swipable Menu routes to app pages", async () => {
   const history = createMemoryHistory()
 
-  const { container, getByLabelText, getAllByRole } = render(
+  const { container } = render(
     <Router history={history}>
       <Navbar />
     </Router>
@@ -28,7 +28,7 @@ test("toggles Sign In/Out button and Left Side Swipable Menu routes to app pages
   expect(container.querySelector("#navSignInButton")?.innerHTML).toMatch(/sign in/i)
 
   // click the menu hamburger icon to open the swipable side left menu
-  const menuButton = getByLabelText("menu")
+  const menuButton = screen.getByLabelText("menu")
 
   // should be on the home page route to begin with
   expect(history.location.pathname).toBe("/")
@@ -36,7 +36,7 @@ test("toggles Sign In/Out button and Left Side Swipable Menu routes to app pages
   // open the side menu
   fireEvent.click(menuButton)
 
-  let sideMenu = await getAllByRole("presentation")
+  let sideMenu = await screen.getAllByRole("presentation")
 
   // left menu Sign In button
   const signInBtn = sideMenu[0].querySelector("#leftDrawerSignIn")!
@@ -53,7 +53,7 @@ test("toggles Sign In/Out button and Left Side Swipable Menu routes to app pages
 
   expect(container.querySelector("#navSignOutButton")?.innerHTML).toMatch(/sign out/i)
 
-  sideMenu = await getAllByRole("presentation")
+  sideMenu = await screen.getAllByRole("presentation")
 
   // left menu Profile button
   const profileBtn = sideMenu[0].querySelector("#leftDrawerProfile")!
@@ -73,7 +73,7 @@ test("should Auth.signOut()", async () => {
 
   const history = createMemoryHistory()
 
-  const { container, getByLabelText, getAllByRole } = render(
+  const { container } = render(
     <Router history={history}>
       <Navbar />
     </Router>
@@ -86,12 +86,12 @@ test("should Auth.signOut()", async () => {
   expect(history.location.pathname).toBe("/")
 
   // click the menu hamburger icon to open the swipable side left menu
-  const menuButton = getByLabelText("menu")
+  const menuButton = screen.getByLabelText("menu")
 
   // open the side menu
   fireEvent.click(menuButton)
 
-  let sideMenu = await getAllByRole("presentation")
+  let sideMenu = await screen.getAllByRole("presentation")
 
   // left menu Profile button
   const profileBtn = sideMenu[0].querySelector("#leftDrawerProfile")!

@@ -1,5 +1,5 @@
 import React from "react"
-import { render, fireEvent, wait } from "@testing-library/react"
+import { render, screen, fireEvent, wait } from "@testing-library/react"
 import { Router } from "react-router-dom"
 import { createMemoryHistory } from "history"
 import user from "@testing-library/user-event"
@@ -28,11 +28,11 @@ test("the sign in form is accessible", async () => {
 })
 
 test("renders the Sign In Page with form validation", async () => {
-  const { container, getAllByText, findByText, getByRole } = render(<SignInForm />, { wrapper: MemoryRouter })
+  const { container } = render(<SignInForm />, { wrapper: MemoryRouter })
   // console.log(container.innerHTML)
 
   // test page title
-  expect(getAllByText(/sign in/i)[0]).toHaveTextContent("Sign In")
+  expect(screen.getByRole("heading", { name: /sign in/i })).toBeInTheDocument()
 
   // submit should be disabled by default on page load and empty form fields
   expect(container.querySelector("#signInButton")).toBeDisabled()
@@ -46,7 +46,8 @@ test("renders the Sign In Page with form validation", async () => {
 
   expect(MockAuth.signIn).not.toHaveBeenCalled()
 
-  await findByText(/invalid email address/i)
+  let validationError = await screen.findByText(/invalid email address/i)
+  expect(validationError.innerHTML).toMatch(/invalid email address/i)
 
   // test password validation
   await wait(() => {
@@ -56,7 +57,8 @@ test("renders the Sign In Page with form validation", async () => {
   })
   expect(MockAuth.signIn).not.toHaveBeenCalled()
 
-  await findByText(/Must be 6 to 12 characters in length/i)
+  validationError = await screen.findByText(/must be 6 to 12 characters in length/i)
+  expect(validationError.innerHTML).toMatch(/must be 6 to 12 characters in length/i)
 })
 
 test("sign in success redirects to /profile", async () => {
@@ -121,10 +123,10 @@ test("should handle authentication errors", async () => {
     // {"__type":"NotAuthorizedException","message":"Incorrect username or password."}
   })
 
-  const { container, getByLabelText, getByText, queryByText } = render(<SignInForm />, { wrapper: MemoryRouter })
+  const { container } = render(<SignInForm />, { wrapper: MemoryRouter })
 
-  const emailInput = getByLabelText(/email/i) as HTMLFormElement
-  const passwordInput = getByLabelText(/password/i) as HTMLFormElement
+  const emailInput = screen.getByLabelText(/email/i) as HTMLFormElement
+  const passwordInput = screen.getByLabelText(/password/i) as HTMLFormElement
 
   await wait(() => {
     user.type(emailInput, "user@example.com")
@@ -137,10 +139,10 @@ test("should handle authentication errors", async () => {
   expect(MockAuth.signIn).toHaveBeenCalledTimes(1)
 
   // should be an error message
-  getByText(/incorrect username or password/i)
+  expect(screen.getByText(/incorrect username or password/i)).toBeInTheDocument()
 
   // click on the error message to make it go away (material-ui Chip element)
   const authErrorChip = container.querySelector("#authError > svg")!
   fireEvent.click(authErrorChip)
-  expect(queryByText(/incorrect username or passowrd/i)).not.toBeInTheDocument()
+  expect(screen.queryByText(/incorrect username or passowrd/i)).not.toBeInTheDocument()
 })
