@@ -7,6 +7,9 @@ export default {
     REGION: process.env.REACT_APP_AWS_APP_COGNITO_REGION,
     URL: process.env.REACT_APP_AWS_APP_SERVICE_ENDPOINT,
   },
+  webSocket: {
+    URL: process.env.REACT_APP_AWS_APP_WEBSOCKET_ENDPOINT,
+  },
   cognito: {
     REGION: process.env.REACT_APP_AWS_APP_COGNITO_REGION,
     USER_POOL_ID: process.env.REACT_APP_AWS_APP_COGNITO_USER_POOL_ID,
