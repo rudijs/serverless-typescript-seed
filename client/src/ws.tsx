@@ -2,16 +2,24 @@ import { w3cwebsocket as W3CWebSocket } from "websocket"
 import { Auth, Signer } from "aws-amplify"
 import config from "./config"
 
-let wsClient: any = null
+let webSocket: any = null
+// let webSocket: WebSocket | null = null
 
 export const client = async () => {
-  if (wsClient) return wsClient
+  // console.log("typeof", typeof webSocket)
+  // return any existing client
+  if (webSocket) {
+    console.log("return existing webSocket")
+    return webSocket
+  }
 
-  // console.log(111, await Auth.currentAuthenticatedUser())
-  if ((await Auth.currentUserInfo()) === null) return wsClient
+  // return if not signed in
+  const currentUserInfo = await Auth.currentUserInfo()
+  console.log("currentUserInfo", JSON.stringify(currentUserInfo, null, 2))
+  if ((await Auth.currentUserInfo()) === null) return webSocket
 
   const credentials = await Auth.currentCredentials()
-  // console.log(101, credentials)
+  // console.log("currentCredentials", JSON.stringify(credentials, null, 2))
 
   const accessInfo = {
     access_key: credentials.accessKeyId,
@@ -25,25 +33,44 @@ export const client = async () => {
 
   // console.log(401, signedUrl)
 
-  wsClient = new W3CWebSocket(signedUrl)
+  webSocket = new W3CWebSocket(signedUrl)
 
-  wsClient.onerror = function () {
+  webSocket.onerror = function () {
     console.log("[client]: Connection Error")
   }
 
-  wsClient.onopen = function () {
+  webSocket.onopen = function () {
     console.log("[client]: WebSocket Client Connected")
+    keepAlive()
   }
 
-  wsClient.onclose = function () {
+  webSocket.onclose = function () {
     console.log("[client]: Client Closed")
+    cancelKeepAlive()
   }
 
-  wsClient.onmessage = function (e: any) {
+  webSocket.onmessage = function (e: any) {
     if (typeof e.data === "string") {
       console.log("Received: '" + e.data + "'")
     }
   }
 
-  return wsClient
+  let timerId: any
+
+  function keepAlive() {
+    console.log("keepAlive()", webSocket.readyState, webSocket.OPEN)
+    var timeout = 20000
+    if (webSocket.readyState === webSocket.OPEN) {
+      webSocket.send('{"action": "hello"}')
+    }
+    timerId = setTimeout(keepAlive, timeout)
+  }
+
+  function cancelKeepAlive() {
+    if (timerId) {
+      clearTimeout(timerId)
+    }
+  }
+
+  return webSocket
 }

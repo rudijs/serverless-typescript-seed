@@ -8,7 +8,7 @@ export default {
     URL: process.env.REACT_APP_AWS_APP_SERVICE_ENDPOINT,
   },
   webSocket: {
-    URL: process.env.REACT_APP_AWS_APP_WEBSOCKET_ENDPOINT,
+    URL: process.env.REACT_APP_AWS_APP_WEBSOCKET_ENDPOINT || "",
   },
   cognito: {
     REGION: process.env.REACT_APP_AWS_APP_COGNITO_REGION,
