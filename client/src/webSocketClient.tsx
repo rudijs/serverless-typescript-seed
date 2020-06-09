@@ -94,8 +94,8 @@ export class WebSocketClient {
     console.log("keepAlive()", this.webSocket?.readyState, this.webSocket?.OPEN)
     const timeout = 20000
     if (this.webSocket?.readyState === this.webSocket?.OPEN) {
-      // this.webSocket.send('{"action": "hello"}')
-      this.webSocket?.send(JSON.stringify({ action: "hello" }))
+      console.log("sending ping")
+      this.webSocket?.send(JSON.stringify({ action: "ping" }))
     }
     this.timerId = setTimeout(this.keepAlive, timeout)
     // }
