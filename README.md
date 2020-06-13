@@ -8,3 +8,5 @@ See the README files in the directories:
 
 - devops
 - api
+
+![Application Architeture](docs/architecture.drawio.png)

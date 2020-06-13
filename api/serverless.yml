@@ -32,11 +32,20 @@ provider:
   region: ${opt:region, 'ap-southeast-1'}
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  tracing:
+    apiGateway: true
+    lambda: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     REGION: ${self:provider.region}
     USER_POOL_ID: ${self:custom.cognito.userPoolId}
   iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+      Resource: "*"
+
     - Effect: Allow
       Action:
         - cognito-idp:AdminListGroupsForUser
