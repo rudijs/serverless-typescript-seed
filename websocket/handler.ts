@@ -34,6 +34,10 @@ export const connect: APIGatewayProxyHandler = async (event, _context) => {
     TableName: "WSConnections",
     Item: {
       ConnectionID: event.requestContext.connectionId,
+      sourceIp: event.requestContext.identity.sourceIp,
+      sub: userAttributes.sub,
+      email: userAttributes.email,
+      groups: cognitoGroups,
     },
   }
 
