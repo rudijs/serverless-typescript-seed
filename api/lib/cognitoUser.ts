@@ -20,21 +20,26 @@ export const cognitoUserInfo = async (
   cognitoAuthenticationProvider: string,
   cognitoIdentityServiceProvider: ICognitoIdentityServiceProvider
 ): Promise<{ userPoolUserId: string; userAttributes: any; cognitoGroups: string[] }> => {
+  // ): Promise<any> => {
+  // validate cognitoAuthenticationProvider format
   // Cognito authentication provider looks like:
-  // cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
-  // Where us-east-1_aaaaaaaaa is the User Pool id
-  // And qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr is the User Pool User Id
+  // OLD cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
+  // cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxxxxxx,cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_aaaaaaaa:CognitoSignIn:qqqq-1111-2222-3333-rrrr,cognito-identity-aws-account-id:123456789
+  // Where ap-southeast-1_aaaaaaaa is the User Pool id
+  // And qqqq-1111-2222-3333-rrrr is the User Pool User Id
+  // console.log(cognitoAuthenticationProvider)
 
-  // cognitoAuthenticationProvider cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_bBEEUWPbr,cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_bBEEUWPbr:CognitoSignIn:da9e8459-7ed3-42f2-9646-57b373cdd192
-  const parts = cognitoAuthenticationProvider.split(":")
+  const regex = new RegExp("cognito-idp..*.amazonaws.com/.*,cognito-idp..*.amazonaws.com/.*:CognitoSignIn:.*,cognito-identity-aws-account-id:.*")
+  const test = regex.test(cognitoAuthenticationProvider)
+  if (!test) {
+    throw new Error(`Invalid format cognitoAuthenticationProvider: ${cognitoAuthenticationProvider}`)
+  }
 
-  const userPoolIdParts = parts[parts.length - 3].split("/")
+  const parts = cognitoAuthenticationProvider.split(",")
 
-  const userPoolId = userPoolIdParts[userPoolIdParts.length - 1]
-  // Ex: userPoolId ap-southeast-1_bBEEUWPbr
+  const userPoolId = parts[0].split("/")[1]
 
-  const userPoolUserId = parts[parts.length - 1]
-  // Ex: userPoolUserId da9e8459-7ed3-42f2-9646-57b373cdd192
+  const userPoolUserId = parts[1].split(":")[2]
 
   // user details
   const params = {
@@ -43,7 +48,6 @@ export const cognitoUserInfo = async (
   }
 
   const userData = await cognitoIdentityServiceProvider.adminGetUser(params).promise()
-  // console.log("userData", userData)
 
   // filter out UserAttributes
   const userAttributes = {}
@@ -54,7 +58,6 @@ export const cognitoUserInfo = async (
       userAttributes[item.Name] = item.Value === "true"
     }
   })
-  // console.log(userAttributes)
 
   const groupData = await cognitoIdentityServiceProvider
     .adminListGroupsForUser({
@@ -62,8 +65,6 @@ export const cognitoUserInfo = async (
       Username: userPoolUserId,
     })
     .promise()
-
-  // console.log("adminListGroupsForUser", groupData)
 
   return { userPoolUserId, userAttributes, cognitoGroups: groupFilter(groupData) }
 }

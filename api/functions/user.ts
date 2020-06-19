@@ -13,6 +13,7 @@ export const main: APIGatewayProxyHandler = async (event, _context) => {
   try {
     // 1st get the cognito groups for the requesting user
     const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider()
+    // console.log("api cognitoAuthenticationProvider", event.requestContext.identity.cognitoAuthenticationProvider)
     const authProvider = event.requestContext.identity.cognitoAuthenticationProvider
     const { userAttributes, cognitoGroups } = await cognitoUserInfo(authProvider, cognitoIdentityServiceProvider)
     // console.log("userPoolUserId", userPoolUserId)

@@ -1,4 +1,5 @@
 import { API, Auth } from "aws-amplify"
+// import { Auth } from "aws-amplify"
 
 export const userTests = () => {
   describe("not authorized", () => {
@@ -6,7 +7,7 @@ export const userTests = () => {
       try {
         await Auth.signIn("admin@example.com", "incorrectPassword")
       } catch (e) {
-        console.log("e", e)
+        // console.log("e", e)
         expect(e.code).toBe("NotAuthorizedException")
         expect(e.name).toBe("NotAuthorizedException")
         expect(e.message).toBe("Incorrect username or password.")
@@ -17,7 +18,7 @@ export const userTests = () => {
       try {
         await Auth.signIn("uknownUsern@example.com", "incorrectPassword")
       } catch (e) {
-        console.log("e", e)
+        // console.log("e", e)
         expect(e.code).toBe("UserNotFoundException")
         expect(e.name).toBe("UserNotFoundException")
         expect(e.message).toBe("User does not exist.")
@@ -30,11 +31,9 @@ export const userTests = () => {
       beforeAll(async () => {
         await Auth.signIn("admin@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
       })
-
       afterAll(async () => {
         await Auth.signOut()
       })
-
       test("should fetch all users", async () => {
         const res = await API.get("notes", "/user", {})
         // console.log(res)
@@ -42,12 +41,11 @@ export const userTests = () => {
         expect(res.data[0]).toHaveProperty("Username")
         expect(res.data[1]).toHaveProperty("Username")
       })
-
       test("should fetch a single user of same profile", async () => {
         const res = await API.get("notes", "/user/admin@example.com", {})
+        // console.log(res)
         expect(res.data).toHaveProperty("Username")
       })
-
       test("should fetch a single user of other profile", async () => {
         const res = await API.get("notes", "/user/user@example.com", {})
         expect(res.data).toHaveProperty("Username")
@@ -58,11 +56,9 @@ export const userTests = () => {
       beforeAll(async () => {
         await Auth.signIn("user@example.com", process.env.AWS_APP_ADMIN_PASSWORD)
       })
-
       afterAll(async () => {
         await Auth.signOut()
       })
-
       test("should not fetch all users when using a role without permission", async () => {
         try {
           await API.get("notes", "/user", {})
@@ -74,12 +70,10 @@ export const userTests = () => {
           expect(e.response.data.errors[0].title).toBe("Permission denied for this action: ListUsers")
         }
       })
-
       test("should fetch a single user of same profile", async () => {
         const res = await API.get("notes", "/user/user@example.com", {})
         expect(res.data).toHaveProperty("Username")
       })
-
       test("should not fetch a single user of other profile", async () => {
         try {
           await API.get("notes", "/user/admin@example.com", {})
