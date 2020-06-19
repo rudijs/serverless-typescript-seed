@@ -4,7 +4,7 @@ import * as util from "util"
 import * as AWS from "aws-sdk"
 import { ServiceConfigurationOptions } from "aws-sdk/lib/service"
 
-// import { cognitoUserInfo } from "../api/lib/cognitoUser"
+import { cognitoUserInfo } from "../api/lib/cognitoUser"
 import { put, deleteItem } from "./functions/ddb"
 
 // https://seed.run/blog/how-to-fix-dynamodb-timeouts-in-serverless-application.html
@@ -21,13 +21,14 @@ export const connect: APIGatewayProxyHandler = async (event, _context) => {
   // console.log("event", JSON.stringify(event))
 
   // 1st get the cognito groups for the requesting user
-  // const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider()
-  // const authProvider = event.requestContext.identity.cognitoAuthenticationProvider
+  const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider()
+  const authProvider = event.requestContext.identity.cognitoAuthenticationProvider
   console.log(event.requestContext.identity.cognitoAuthenticationProvider)
-  // const { userAttributes, cognitoGroups } = await cognitoUserInfo(authProvider, cognitoIdentityServiceProvider)
+  const { userAttributes, cognitoGroups } = await cognitoUserInfo(authProvider, cognitoIdentityServiceProvider)
   // console.log("userPoolUserId", userPoolUserId)
-  // console.log("userAttributes", userAttributes)
-  // console.log("cognitoGroups", cognitoGroups)
+  console.log("userAttributes", userAttributes)
+  console.log("cognitoGroups", cognitoGroups)
+  console.log(event.requestContext.identity.sourceIp)
 
   const putParams = {
     TableName: "WSConnections",
