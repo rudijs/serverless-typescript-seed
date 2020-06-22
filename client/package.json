@@ -15,6 +15,7 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
     "@types/yup": "^0.26.37",
+    "@xstate/react": "^0.8.1",
     "animejs": "^3.2.0",
     "aws-amplify": "^3.0.8",
     "formik": "^2.1.4",
@@ -29,6 +30,7 @@
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5",
     "websocket": "^1.0.31",
+    "xstate": "^4.10.0",
     "yup": "^0.28.3"
   },
   "scripts": {

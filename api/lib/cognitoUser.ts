@@ -22,14 +22,14 @@ export const cognitoUserInfo = async (
 ): Promise<{ userPoolUserId: string; userAttributes: any; cognitoGroups: string[] }> => {
   // ): Promise<any> => {
   // validate cognitoAuthenticationProvider format
-  // Cognito authentication provider looks like:
-  // OLD cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
-  // cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxxxxxx,cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_aaaaaaaa:CognitoSignIn:qqqq-1111-2222-3333-rrrr,cognito-identity-aws-account-id:123456789
+  // Cognito authentication provider looks like either of these:
+  // 1) cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxxxxxx,cognito-idp.us-east-1.amazonaws.com/us-east-1_aaaaaaaaa:CognitoSignIn:qqqqqqqq-1111-2222-3333-rrrrrrrrrrrr
+  // 2) cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_xxxxxxx,cognito-idp.ap-southeast-1.amazonaws.com/ap-southeast-1_aaaaaaaa:CognitoSignIn:qqqq-1111-2222-3333-rrrr,cognito-identity-aws-account-id:123456789
   // Where ap-southeast-1_aaaaaaaa is the User Pool id
   // And qqqq-1111-2222-3333-rrrr is the User Pool User Id
   // console.log(cognitoAuthenticationProvider)
 
-  const regex = new RegExp("cognito-idp..*.amazonaws.com/.*,cognito-idp..*.amazonaws.com/.*:CognitoSignIn:.*,cognito-identity-aws-account-id:.*")
+  const regex = new RegExp("cognito-idp..*.amazonaws.com/.*,cognito-idp..*.amazonaws.com/.*:CognitoSignIn:.*")
   const test = regex.test(cognitoAuthenticationProvider)
   if (!test) {
     throw new Error(`Invalid format cognitoAuthenticationProvider: ${cognitoAuthenticationProvider}`)

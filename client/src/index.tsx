@@ -51,8 +51,6 @@ Amplify.configure({
         name: "notes",
         region: config.apiGateway.REGION,
         endpoint: config.apiGateway.URL,
-        // endpoint: "https://yc609d159e.execute-api.ap-southeast-1.amazonaws.com/dev",
-        // region: "ap-southeast-1"
       },
     ],
   },
