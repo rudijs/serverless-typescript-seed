@@ -1,0 +1,9 @@
+resources:
+  Parameters:
+    MacroParamStage:
+      Type: String
+      Default: dev
+    MacroParamTopicArn:
+      Type: String
+      Description: The ARN of the SNS topic to use in the alarms.
+      Default: arn:aws:sns:ap-southeast-1:205565617391:demo-serverless-alarms

@@ -1,0 +1,13 @@
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  cloudwatchalarmsmacro:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location:
+        ApplicationId: arn:aws:serverlessrepo:us-east-1:374852340823:applications/cloudwatch-alarms-macro
+        SemanticVersion: 1.0.1
+      Parameters:
+        # The name of the SSM parameter with the default config. For example, "/alarms/defaultConfig" See the README for the structure of this config object.
+        DefaultConfigParamName: /alarms/defaultConfig
+        # The name of the macro that is created.
+        # MacroName: 'AddCloudWatchAlarms' # Uncomment to override default value

@@ -1,0 +1,9 @@
+[
+  {
+    "EventBusName": "custom-saas-events",
+    "Source": "saas.external",
+    "Detail": "{ \"key1\": \"value1\", \"key2\": \"value2\" }",
+    "Resources": ["resource1", "resource2"],
+    "DetailType": "myDetailType"
+  }
+]

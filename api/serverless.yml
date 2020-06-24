@@ -13,6 +13,7 @@ plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function # https://github.com/functionalone/serverless-iam-roles-per-function
+  # - serverless-cloudformation-parameter-setter # https://www.serverless.com/plugins/serverless-cloudformation-parameter-setter/
 
 custom:
   webpack:
@@ -24,6 +25,8 @@ custom:
     userPoolId: ${env:AWS_APP_COGNITO_USER_POOL_ID, 'unset-cognito-user-pool-id'}
   serverless-iam-roles-per-function:
     defaultInherit: true
+  # destinations:
+  #   failureArn: arn:aws:sqs:ap-southeast-1:#{AWS::AccountId}:demoDestinations
 
 provider:
   name: aws
@@ -59,6 +62,35 @@ functions:
           method: get
           path: ping
 
+  temp:
+    handler: functions/temp.main
+    destinations:
+      # onSuccess: arn:aws:sqs:${self:provider.region}:#{AWS::AccountId}:demoDestinations
+      onSuccess: arn:aws:sns:${self:provider.region}:#{AWS::AccountId}:demo-serverless-alarms
+      # onFailure: arn:aws:sqs:${self:provider.region}:#{AWS::AccountId}:demoDestinations
+      onFailure: arn:aws:sns:${self:provider.region}:#{AWS::AccountId}:demo-serverless-alarms
+
+  demo:
+    handler: functions/demo.main
+    events:
+      - http:
+          method: get
+          path: demo
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - events:PutEvents
+        Resource: arn:aws:events:${self:provider.region}:#{AWS::AccountId}:event-bus/custom-saas-events
+
+  myFunction:
+    handler: functions/myFunction.main
+    events:
+      - eventBridge:
+          eventBus: custom-saas-events
+          pattern:
+            source:
+              - saas.external
+
   user:
     handler: functions/user.main
     events:
@@ -84,3 +116,7 @@ functions:
 resources:
   # API Gateway Errors
   - ${file(resources/api-gateway-errors.yml)}
+  # Alarms Parameters
+  # - ${file(resources/cloudwatch-alarms-parameters.yml)}
+  # Alarms
+  # - ${file(resources/sar-cloudwatch-alarms-macro.yml)}
