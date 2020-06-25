@@ -1,0 +1,52 @@
+service:
+  name: user-api
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# plugins: ${file(../serverless.common.yml):plugins}
+plugins:
+  - serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function # https://github.com/functionalone/serverless-iam-roles-per-function
+  - serverless-domain-manager
+  # - serverless-cloudformation-parameter-setter # https://www.serverless.com/plugins/serverless-cloudformation-parameter-setter/
+
+custom: ${file(../serverless.common.yml):custom}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  tracing: ${file(../serverless.common.yml):tracing}
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+    environment:
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  iamRoleStatements:
+    - ${file(../serverless.common.yml):lambdaPolicyXRay}
+
+functions:
+  user:
+    handler: handler.user
+    events:
+      - http:
+          method: get
+          path: user
+
+resources:
+  - Outputs:
+      ApiGatewayRestApiId:
+        Value:
+          Ref: ApiGatewayRestApi
+        Export:
+          Name: ${self:custom.stage}-ExtApiGatewayRestApiId
+
+      ApiGatewayRestApiRootResourceId:
+        Value:
+          Fn::GetAtt:
+            - ApiGatewayRestApi
+            - RootResourceId
+        Export:
+          Name: ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId

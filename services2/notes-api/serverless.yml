@@ -1,0 +1,35 @@
+service:
+  name: user-service
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+plugins:
+  - serverless-webpack
+
+custom: ${file(../serverless.common.yml):custom}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  tracing: ${file(../serverless.common.yml):tracing
+  apiGateway:
+    minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+    restApiId:
+      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiId
+    restApiRootResourceId:
+      "Fn::ImportValue": ${self:custom.stage}-ExtApiGatewayRestApiRootResourceId
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+  iamRoleStatements:
+    - ${file(../serverless.common.yml):lambdaPolicyXRay}
+
+functions:
+  notes:
+    handler: handler.notes
+    events:
+      - http:
+          method: get
+          path: notes
