@@ -28,4 +28,5 @@ lambdaPolicyXRay:
   Action:
     - xray:PutTraceSegments
     - xray:PutTelemetryRecords
-  Resource: "*"
+  # Resource: "*"
+  Resource: arn:aws:xray:${self:provider.region}:#{AWS::AccountId}:*

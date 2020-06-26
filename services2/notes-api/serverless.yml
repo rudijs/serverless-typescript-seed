@@ -1,11 +1,12 @@
 service:
-  name: user-service
+  name: notes-api
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
 
 plugins:
   - serverless-webpack
+  - serverless-pseudo-parameters
 
 custom: ${file(../serverless.common.yml):custom}
 
