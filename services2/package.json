@@ -13,7 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^26.0.3",
-    "aws-sdk": "^2.704.0",
+    "aws-sdk": "^2.814.0",
     "aws-xray-sdk": "^3.1.0",
     "jest": "^26.1.0",
     "ts-jest": "^26.1.1",
